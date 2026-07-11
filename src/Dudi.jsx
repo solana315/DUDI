@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Sim from './Sim.jsx'
 import img5 from './assets/img5.jpeg'
+import backIcon from './assets/11541959.png'
 
 const styles = `
   img[data-polaroid="true"] {
@@ -36,6 +38,7 @@ const styles = `
 `
 
 export default function Dudi() {
+  const navigate = useNavigate()
   const [showSim, setShowSim] = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [position, setPosition] = useState({ x: 0, y: 0 })
@@ -64,6 +67,13 @@ export default function Dudi() {
     <>
       <style>{styles}</style>
       <div style={{backgroundColor: '#FFD1DC', overflow: 'hidden'}} className="min-vh-100 d-flex align-items-center justify-content-center">
+      <button 
+        className="btn position-fixed top-0 start-0 m-3 rounded-circle" 
+        onClick={() => navigate('/')}
+        style={{zIndex: 1000, width: '55px', height: '55px', padding: 0, border: 'none', backgroundColor: 'transparent'}}
+      >
+        <img src={backIcon} alt="Voltar" style={{width: '100%', height: '100%', objectFit: 'contain'}} />
+      </button>
       {showModal && (
         <div style={{
           position: 'fixed',
