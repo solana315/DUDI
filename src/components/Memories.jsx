@@ -28,9 +28,9 @@ export const memories = [
   { id: 5, images: [Florzinha], caption: "Esta foi a primeira vez que apanhaste uma florzinha da rua para mim, parece tão pouco mas fiquei tão feliz queria chorar.", date: "4 de março, 2025" },
   { id: 6, images: [Algarve2_2, Algarve2_1, Algarve2,Algarve2_3], caption: "Esta foi a minha segunda ida ao Algarve para te ver meu amor.", date: "13 Agosto, 2025" },
   { id: 7, images: [PrimeiraRosa], caption: "Esta foi a primeira flor que me deste, fui para casa no fim de semana super contente, se não me enagano fartei me de te pedir ao sair do nb,", date: "7 de fevereiro, 2025" },
-  { id: 8, images: [], caption: "esse dia foi o que começou devagar", date: "julho, 2024" },
+ /* { id: 8, images: [], caption: "esse dia foi o que começou devagar", date: "julho, 2024" },
   { id: 9, images: [], caption: "esse dia foi o que mudou tudo", date: "julho, 2024" },
   { id: 10, images: [], caption: "esse dia foi o que eu chorei de rir", date: "agosto, 2024" },
   { id: 11, images: [], caption: "esse dia foi o que cheirava a baunilha", date: "agosto, 2024" },
-  { id: 12, images: [], caption: "esse dia foi o que chegou sem avisar", date: "setembro, 2024" },
+  { id: 12, images: [], caption: "esse dia foi o que chegou sem avisar", date: "setembro, 2024" },*/
 ]
