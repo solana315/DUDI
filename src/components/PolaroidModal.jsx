@@ -1,36 +1,67 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 export default function PolaroidModal({ memory, onClose }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const dragStartX = useRef(null)
+  const dragStartY = useRef(null)
+  const dragDirection = useRef(null) // 'horizontal' | 'vertical' | null
   const [dragOffset, setDragOffset] = useState(0)
-
-  if (!memory) return null
+  const carouselRef = useRef(null)
 
   const isFirst = currentIndex === 0
-  const isLast = currentIndex === memory.images.length - 1
+  const isLast = memory ? currentIndex === memory.images.length - 1 : true
+
+  // Tranca o scroll da página de fundo enquanto o modal está aberto
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow
+    const originalTouchAction = document.body.style.touchAction
+    document.body.style.overflow = 'hidden'
+    document.body.style.touchAction = 'none'
+    return () => {
+      document.body.style.overflow = originalOverflow
+      document.body.style.touchAction = originalTouchAction
+    }
+  }, [])
 
   const goToIndex = (index) => {
+    if (!memory) return
     const max = memory.images.length - 1
     const clamped = Math.max(0, Math.min(max, index))
     setCurrentIndex(clamped)
   }
 
-  const handleDragStart = (clientX) => {
+  const handleDragStart = (clientX, clientY) => {
     dragStartX.current = clientX
+    dragStartY.current = clientY
+    dragDirection.current = null
   }
 
-  const handleDragMove = (clientX) => {
+  const handleDragMove = (clientX, clientY, nativeEvent) => {
     if (dragStartX.current === null) return
-    let offset = clientX - dragStartX.current
 
-    // Impede completamente arrastar para além da primeira ou última foto
-    if (isFirst && offset > 0) {
-      offset = 0
+    const deltaX = clientX - dragStartX.current
+    const deltaY = clientY - dragStartY.current
+
+    // Decide a direção do gesto assim que houver movimento suficiente
+    if (dragDirection.current === null) {
+      if (Math.abs(deltaX) < 8 && Math.abs(deltaY) < 8) return
+      dragDirection.current = Math.abs(deltaX) > Math.abs(deltaY) ? 'horizontal' : 'vertical'
     }
-    if (isLast && offset < 0) {
-      offset = 0
+
+    // Se for gesto vertical, não interferimos (deixa o browser fazer o que quiser,
+    // já que o body está trancado, isto simplesmente ignora o drag)
+    if (dragDirection.current === 'vertical') {
+      return
     }
+
+    // Gesto horizontal: impede o scroll/refresh nativo do browser
+    if (nativeEvent && nativeEvent.cancelable) {
+      nativeEvent.preventDefault()
+    }
+
+    let offset = deltaX
+    if (isFirst && offset > 0) offset = 0
+    if (isLast && offset < 0) offset = 0
 
     setDragOffset(offset)
   }
@@ -39,15 +70,35 @@ export default function PolaroidModal({ memory, onClose }) {
     if (dragStartX.current === null) return
     const threshold = 60
 
-    // Só permite avançar/recuar se não estiver a tentar ultrapassar o limite
-    if (dragOffset < -threshold && !isLast) {
-      goToIndex(currentIndex + 1)
-    } else if (dragOffset > threshold && !isFirst) {
-      goToIndex(currentIndex - 1)
+    if (dragDirection.current === 'horizontal') {
+      if (dragOffset < -threshold && !isLast) {
+        goToIndex(currentIndex + 1)
+      } else if (dragOffset > threshold && !isFirst) {
+        goToIndex(currentIndex - 1)
+      }
     }
+
     dragStartX.current = null
+    dragStartY.current = null
+    dragDirection.current = null
     setDragOffset(0)
   }
+
+  // Listener de touchmove nativo com { passive: false } para o preventDefault funcionar
+  useEffect(() => {
+    const el = carouselRef.current
+    if (!el) return
+
+    const onTouchMove = (e) => {
+      const touch = e.touches[0]
+      handleDragMove(touch.clientX, touch.clientY, e)
+    }
+
+    el.addEventListener('touchmove', onTouchMove, { passive: false })
+    return () => el.removeEventListener('touchmove', onTouchMove)
+  }, [currentIndex, dragOffset, isFirst, isLast])
+
+  if (!memory) return null
 
   return (
     <div
@@ -63,7 +114,8 @@ export default function PolaroidModal({ memory, onClose }) {
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 2000,
-        padding: '20px'
+        padding: '20px',
+        overscrollBehavior: 'contain'
       }}
     >
       <button
@@ -91,6 +143,7 @@ export default function PolaroidModal({ memory, onClose }) {
 
       {memory.images.length > 0 && (
         <div
+          ref={carouselRef}
           onClick={(e) => e.stopPropagation()}
           style={{
             position: 'relative',
@@ -100,16 +153,15 @@ export default function PolaroidModal({ memory, onClose }) {
             alignItems: 'center',
             justifyContent: 'center',
             cursor: memory.images.length > 1 ? 'grab' : 'default',
-            touchAction: 'pan-y',
+            touchAction: memory.images.length > 1 ? 'pan-y' : 'auto',
             userSelect: 'none',
             overflow: 'hidden'
           }}
-          onMouseDown={(e) => handleDragStart(e.clientX)}
-          onMouseMove={(e) => e.buttons === 1 && handleDragMove(e.clientX)}
+          onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}
+          onMouseMove={(e) => e.buttons === 1 && handleDragMove(e.clientX, e.clientY)}
           onMouseUp={handleDragEnd}
           onMouseLeave={() => dragStartX.current !== null && handleDragEnd()}
-          onTouchStart={(e) => handleDragStart(e.touches[0].clientX)}
-          onTouchMove={(e) => handleDragMove(e.touches[0].clientX)}
+          onTouchStart={(e) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY)}
           onTouchEnd={handleDragEnd}
         >
           <div
