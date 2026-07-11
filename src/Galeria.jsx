@@ -36,9 +36,9 @@ export default function Galeria() {
           <span className="d-block text-uppercase small fw-bold mb-2 text-danger" style={{ letterSpacing: '0.28em' }}>
             memórias
           </span>
-          <h1 className="fw-bold mb-3 text-dark">a minha galeria</h1>
+          <h1 className="fw-bold mb-3 text-dark">A nossa galeria</h1>
           <p className="mx-auto fst-italic fs-5 text-secondary" style={{ maxWidth: '380px' }}>
-            cada polaroid guarda um pedacinho de um dia que valeu a pena lembrar.
+            cada polaroid guarda um pedacinho de um dia que valeu a pena lembrar, carrega em cada uma para veres mais &lt;3.
           </p>
         </div>
 
