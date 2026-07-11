@@ -22,7 +22,7 @@ export const memories = [
   { id: 2, images: [Porto23_07_26, Porto23_07_26, Porto2, Porto3], caption: "Este dia que me fizeste sentir como a Rapunzel, levaste-me ver as luzes lindas que tanto sonhei desde criança.",
     date: "23 de junho 2026" },
   { id: 3, images: [Rosa], 
-    caption: "Este dia foi a primeira rosa que te ofereci, comprei uma branca porque dissesteq ue são as que mais gostas.", 
+    caption: "Este dia foi a primeira rosa que te ofereci, comprei uma branca porque disseste que são as que mais gostas.", 
     date: "6 de fevereiro 2025" },
   { id: 4, images: [JantarCurso], caption: "Este foi o dia em que os nossos professores ficaram felizes por estarmos juntos.", date: "6 fevereiro, 2026" },
   { id: 5, images: [Florzinha], caption: "Esta foi a primeira vez que apanhaste uma florzinha da rua para mim, parece tão pouco mas fiquei tão feliz queria chorar.", date: "4 de março, 2025" },
