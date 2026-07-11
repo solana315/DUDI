@@ -16,12 +16,12 @@ import PrimeiraRosa from '../assets/PrimeiraRosa.jpg'
 // import img1 from './assets/img1.jpeg'
 export const memories = [
   {
-    id: 1, images: [Lingua], 
+    id: 1, images: [Lingua, Lingua], 
     caption: "Este dia estava triste e nem precisei dizer nada, preocupaste-te comigo e fizeste-me rir mesmo assim, adoro esta foto que me lembra a sorte que tenho de ser amada assim.", 
     date: "1 de novembro 2025" },
-  { id: 2, images: [Porto23_07_26, Porto2, Porto3], caption: "Este dia que me fizeste sentir como a Rapunzel, levaste-me ver as luzes lindas que tanto sonhei desde criança.",
+  { id: 2, images: [Porto23_07_26, Porto23_07_26, Porto2, Porto3], caption: "Este dia que me fizeste sentir como a Rapunzel, levaste-me ver as luzes lindas que tanto sonhei desde criança.",
     date: "23 de junho 2026" },
-  { id: 3, images: [Rosa], 
+  { id: 3, images: [Rosa, Rosa], 
     caption: "Este dia foi a primeira rosa que te ofereci, comprei uma branca porque disseste que são as que mais gostas.", 
     date: "6 de fevereiro 2025" },
   { id: 4, images: [JantarCurso], caption: "Este foi o dia em que os nossos professores ficaram felizes por estarmos juntos.", date: "6 fevereiro, 2026" },
