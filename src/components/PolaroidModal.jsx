@@ -7,6 +7,9 @@ export default function PolaroidModal({ memory, onClose }) {
 
   if (!memory) return null
 
+  const isFirst = currentIndex === 0
+  const isLast = currentIndex === memory.images.length - 1
+
   const goToIndex = (index) => {
     const max = memory.images.length - 1
     const clamped = Math.max(0, Math.min(max, index))
@@ -19,15 +22,27 @@ export default function PolaroidModal({ memory, onClose }) {
 
   const handleDragMove = (clientX) => {
     if (dragStartX.current === null) return
-    setDragOffset(clientX - dragStartX.current)
+    let offset = clientX - dragStartX.current
+
+    // Impede completamente arrastar para além da primeira ou última foto
+    if (isFirst && offset > 0) {
+      offset = 0
+    }
+    if (isLast && offset < 0) {
+      offset = 0
+    }
+
+    setDragOffset(offset)
   }
 
   const handleDragEnd = () => {
     if (dragStartX.current === null) return
     const threshold = 60
-    if (dragOffset < -threshold) {
+
+    // Só permite avançar/recuar se não estiver a tentar ultrapassar o limite
+    if (dragOffset < -threshold && !isLast) {
       goToIndex(currentIndex + 1)
-    } else if (dragOffset > threshold) {
+    } else if (dragOffset > threshold && !isFirst) {
       goToIndex(currentIndex - 1)
     }
     dragStartX.current = null
