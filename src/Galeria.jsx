@@ -1,29 +1,15 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import backIcon from './assets/11541959.png'
-
-// Substitui os "image: null" pelas tuas fotos reais, ex:
-// import img1 from './assets/img1.jpeg'
-const memories = [
-  { id: 1, image: null, caption: "esse dia foi o que me acalmou", date: "março, 2024" },
-  { id: 2, image: null, caption: "esse dia foi o que eu precisava", date: "abril, 2024" },
-  { id: 3, image: null, caption: "esse dia foi o melhor do mês", date: "abril, 2024" },
-  { id: 4, image: null, caption: "esse dia foi o mais aconchegante", date: "maio, 2024" },
-  { id: 5, image: null, caption: "esse dia foi o que eu não vou esquecer", date: "maio, 2024" },
-  { id: 6, image: null, caption: "esse dia foi o que floresceu em mim", date: "junho, 2024" },
-  { id: 7, image: null, caption: "esse dia foi o que me inspirou", date: "junho, 2024" },
-  { id: 8, image: null, caption: "esse dia foi o que começou devagar", date: "julho, 2024" },
-  { id: 9, image: null, caption: "esse dia foi o que mudou tudo", date: "julho, 2024" },
-  { id: 10, image: null, caption: "esse dia foi o que eu chorei de rir", date: "agosto, 2024" },
-  { id: 11, image: null, caption: "esse dia foi o que cheirava a baunilha", date: "agosto, 2024" },
-  { id: 12, image: null, caption: "esse dia foi o que chegou sem avisar", date: "setembro, 2024" },
-]
+import PolaroidModal from './components/PolaroidModal.jsx'
+import { memories } from './components/Memories.jsx'
 
 const PAGE_SIZE = 12
 
 export default function Galeria() {
   const navigate = useNavigate()
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
+  const [selectedMemory, setSelectedMemory] = useState(null)
   const visibleMemories = memories.slice(0, visibleCount)
   const hasMore = visibleCount < memories.length
 
@@ -43,6 +29,8 @@ export default function Galeria() {
         <img src={backIcon} alt="Voltar" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
       </button>
 
+      <PolaroidModal memory={selectedMemory} onClose={() => setSelectedMemory(null)} />
+
       <div className="container">
         <div className="text-center mb-5">
           <span className="d-block text-uppercase small fw-bold mb-2 text-danger" style={{ letterSpacing: '0.28em' }}>
@@ -55,14 +43,20 @@ export default function Galeria() {
         </div>
 
         <div className="row g-4 justify-content-center">
-          {visibleMemories.map(({ id, image, caption, date }) => (
-            <div className="col-6 col-md-4 col-lg-3" key={id}>
-              <div className="bg-white rounded-4 shadow-lg p-2 h-100">
+          {visibleMemories.map((memory) => (
+            <div className="col-6 col-md-4 col-lg-3" key={memory.id}>
+              <div
+                className="bg-white rounded-4 shadow-lg p-2 h-100"
+                onClick={() => setSelectedMemory(memory)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="ratio ratio-4x3 mb-2 rounded-3 overflow-hidden" style={checkerStyle}>
-                  {image && <img src={image} alt={caption} className="object-fit-cover" />}
+                  {memory.images[0] && (
+                    <img src={memory.images[0]} alt={memory.caption} className="object-fit-cover" />
+                  )}
                 </div>
-                <p className="fw-semibold mb-1 text-dark">{caption}</p>
-                <small className="text-secondary">{date}</small>
+                <p className="fw-semibold mb-1 text-dark">{memory.caption}</p>
+                <small className="text-secondary">{memory.date}</small>
               </div>
             </div>
           ))}
