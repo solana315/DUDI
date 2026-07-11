@@ -11,17 +11,40 @@ export default function PolaroidModal({ memory, onClose }) {
   const isFirst = currentIndex === 0
   const isLast = memory ? currentIndex === memory.images.length - 1 : true
 
-  // Tranca o scroll da página de fundo apenas enquanto o modal está mesmo aberto
+  // Tranca o scroll da página de fundo apenas enquanto o modal está mesmo aberto.
+  // No mobile (iOS Safari em particular), apenas usar overflow: hidden faz o
+  // conteúdo "fixed" aparecer deslocado se a página já estava com scroll.
+  // A técnica correta é fixar o body na posição atual e repor o scroll ao fechar.
   useEffect(() => {
     if (!memory) return
 
-    const originalOverflow = document.body.style.overflow
-    const originalTouchAction = document.body.style.touchAction
-    document.body.style.overflow = 'hidden'
-    document.body.style.touchAction = 'none'
+    const scrollY = window.scrollY
+    const body = document.body
+
+    const original = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      width: body.style.width,
+      overflow: body.style.overflow,
+      touchAction: body.style.touchAction,
+    }
+
+    body.style.position = 'fixed'
+    body.style.top = `-${scrollY}px`
+    body.style.left = '0'
+    body.style.width = '100%'
+    body.style.overflow = 'hidden'
+    body.style.touchAction = 'none'
+
     return () => {
-      document.body.style.overflow = originalOverflow
-      document.body.style.touchAction = originalTouchAction
+      body.style.position = original.position
+      body.style.top = original.top
+      body.style.left = original.left
+      body.style.width = original.width
+      body.style.overflow = original.overflow
+      body.style.touchAction = original.touchAction
+      window.scrollTo(0, scrollY)
     }
   }, [memory])
 
@@ -153,7 +176,7 @@ export default function PolaroidModal({ memory, onClose }) {
             maxHeight: '100%',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-start',
             cursor: memory.images.length > 1 ? 'grab' : 'default',
             touchAction: memory.images.length > 1 ? 'pan-y' : 'auto',
             userSelect: 'none',
@@ -227,89 +250,3 @@ export default function PolaroidModal({ memory, onClose }) {
     </div>
   )
 }
-
-
-
-/*          ref={carouselRef}
-          onClick={(e) => e.stopPropagation()}
-          style={{
-            position: 'relative',
-            maxWidth: '100%',
-            maxHeight: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: memory.images.length > 1 ? 'grab' : 'default',
-            touchAction: memory.images.length > 1 ? 'pan-y' : 'auto',
-            userSelect: 'none',
-            overflow: 'hidden'
-          }}
-          onMouseDown={(e) => handleDragStart(e.clientX, e.clientY)}
-          onMouseMove={(e) => e.buttons === 1 && handleDragMove(e.clientX, e.clientY)}
-          onMouseUp={handleDragEnd}
-          onMouseLeave={() => dragStartX.current !== null && handleDragEnd()}
-          onTouchStart={(e) => handleDragStart(e.touches[0].clientX, e.touches[0].clientY)}
-          onTouchEnd={handleDragEnd}
-        >
-          <div
-            style={{
-              display: 'flex',
-              transform: `translateX(calc(${-currentIndex * 100}% + ${dragOffset}px))`,
-              transition: dragStartX.current === null ? 'transform 0.3s ease' : 'none'
-            }}
-          >
-            {memory.images.map((img, i) => (
-              <div
-                key={i}
-                style={{
-                  width: '100vw',
-                  maxWidth: '600px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}
-              >
-                <img
-                  src={img}
-                  alt=""
-                  draggable={false}
-                  style={{
-                    maxWidth: '100%',
-                    maxHeight: '85vh',
-                    objectFit: 'contain',
-                    borderRadius: '12px'
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-
-          {memory.images.length > 1 && (
-            <div style={{
-              position: 'absolute',
-              bottom: '-30px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              display: 'flex',
-              gap: '6px'
-            }}>
-              {memory.images.map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    backgroundColor: i === currentIndex ? 'white' : 'rgba(255,255,255,0.4)'
-                  }}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
- */
