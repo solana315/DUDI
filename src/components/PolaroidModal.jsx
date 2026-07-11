@@ -167,7 +167,7 @@ export default function PolaroidModal({ memory, onClose }) {
           <div
             style={{
               display: 'flex',
-              transform: `translateX(calc(${-currentIndex * 100}% + ${dragOffset}px))`,
+              transform: `translateX(calc(${-(currentIndex / memory.images.length) * 100}% + ${dragOffset}px))`,
               transition: dragStartX.current === null ? 'transform 0.3s ease' : 'none'
             }}
           >
